@@ -63,19 +63,6 @@ def test_interpolation(httpbin):
     assert output['version'] == {}
 
 
-def test_empty_check(httpbin):
-    """Check must return an empty response but not nothing."""
-
-    source = {
-        'uri': httpbin + '/post',
-        'method': 'POST',
-    }
-
-    check = cmd('check', source)
-
-    assert check == []
-
-
 def test_data_urlencode(httpbin):
     """Test passing URL encoded data."""
 

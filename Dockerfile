@@ -18,6 +18,11 @@ FROM python:3.6 as testbuild
 # install requirements
 COPY requirements*.txt ./
 RUN pip install --no-cache-dir -r requirements_dev.txt
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y \
+    jq \
+    && rm -rf /var/lib/apt/lists/*
+
 # install asserts
 WORKDIR /resource
 COPY . .

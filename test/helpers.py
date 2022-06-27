@@ -11,6 +11,7 @@ ENVIRONMENT = {
     'TEST': 'true',
 }
 
+
 def cmd(cmd_name, source, args: list = [], version={}, params={}):
     """Wrap command interaction for easier use with python objects."""
 
