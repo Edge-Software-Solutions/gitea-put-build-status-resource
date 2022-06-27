@@ -17,7 +17,7 @@ if [ -z "${destination}" ]; then
     exit 1
 fi
 
-payload="$(mktemp "${TMPDIR}/gitea-pull-request-resource.XXXXXX")"
+payload="$(mktemp "${TMPDIR}/gitea-put-build-status-resource.XXXXXX")"
 
 cat > "${payload}" <&0
 

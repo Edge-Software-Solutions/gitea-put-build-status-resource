@@ -1,19 +1,19 @@
-# Gitea Pull Request Concourse Resource
+# Gitea Put Build Status Resource
 
-A concourse resource to check for new pull requests on Gitea and update the pull request status.
+A concourse resource to put build statuses to gitea
 
 ## Source Configuration
 
 ```yaml
 resource_types:
-- name: pull-request
+- name: gitea-put-build-status
   type: docker-image
   source:
-    repository: spatialbuzz/gitea-pull-request-resource
+    repository: objectivetruth/gitea-put-build-status-resource
 
 resources:
-- name: repo-mr
-  type: pull-request
+- name: my-repo-build-status
+  type: gitea-put-build-status
   source:
     uri: https://my.gitea.host/myname/myproject.git
     private_token: XXX
