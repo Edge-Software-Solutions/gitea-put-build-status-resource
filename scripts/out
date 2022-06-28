@@ -69,13 +69,12 @@ index=$(git show-ref | grep 'refs/pull/' | grep ${commit_sha} | sed 's/.*refs\/p
 branch="$(git rev-parse --abbrev-ref HEAD)"
 
 #-s \
-echo curl \
+curl \
     --request POST \
     --header "Authorization: token ${private_token}" \
     --header 'Content-Type: application/json' \
     --data "{\"state\":\"${new_status}\",\"description\":\"${description}\",\"context\":\"${build_label}\",\"target_url\":\"${target_url}\"}" \
     "${protocol}://${gitea_host}/api/v1/repos/${project_path}/statuses/${commit_sha}" #> /dev/null
-exit 1
 version="{\"ref\":\"${commit_sha}:${branch}:${index}\"}"
 
 jq -n "{

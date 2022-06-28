@@ -2,4 +2,4 @@ pylama
 pytest
 isort
 responses
-pytest-httpbin
+pytest-httpserver
