@@ -32,6 +32,7 @@ path_to_repo="$(echo "${params}" | jq -r '.repository // ""')"
 new_status="$(echo "${params}" | jq -r '.status // ""')"
 description="$(echo "${params}" | jq -r '.description // ""')"
 build_label="$(echo "${params}" | jq -r '.build_label // "Concourse"')"
+current_multibranch="$(jq -r '.source.current_multibranch // ""' < "${payload}")"
 
 if [ -z "${path_to_repo}" ]; then
     echo "please specify a repository" >&2
@@ -41,6 +42,8 @@ if [ -z "${new_status}" ]; then
     echo "please specify a status" >&2
     exit 1
 fi
+echo "Received Payload:"
+jq < "${payload}"
 
 gitea_host=''
 project_path=''
@@ -59,7 +62,7 @@ if [ "${no_ssl}" == 'true' ]; then
     protocol='http'
 fi
 
-target_url="${ATC_EXTERNAL_URL}/teams/$(urlencode "${BUILD_TEAM_NAME}")/pipelines/$(urlencode "${BUILD_PIPELINE_NAME}")/jobs/$(urlencode "${BUILD_JOB_NAME}")/builds/$(urlencode "${BUILD_NAME}")"
+
 
 cd "${destination}"
 cd "${path_to_repo}"
@@ -68,13 +71,29 @@ commit_sha="$(git rev-parse HEAD)"
 index=$(git show-ref | grep 'refs/pull/' | grep ${commit_sha} | sed 's/.*refs\/pull\/\(.*\)\/.*/\1/')
 branch="$(git rev-parse --abbrev-ref HEAD)"
 
-#-s \
-curl \
+target_url="${ATC_EXTERNAL_URL}/teams/$(urlencode "${BUILD_TEAM_NAME}")/pipelines/$(urlencode "${BUILD_PIPELINE_NAME}")/jobs/$(urlencode "${BUILD_JOB_NAME}")/builds/$(urlencode "${BUILD_NAME}")"
+
+if [[ -n "${current_multibranch}" ]]; then
+    target_url="${target_url}?vars.branch=$(urlencode \""${current_multibranch}"\")"
+fi
+if [[ -z "${description}" ]]; then
+    description="Concourse Job - ${BUILD_JOB_NAME} #${BUILD_NAME}"
+fi
+
+echo "Making a request to gitea to update the build status"
+echo curl \
     --request POST \
     --header "Authorization: token ${private_token}" \
     --header 'Content-Type: application/json' \
     --data "{\"state\":\"${new_status}\",\"description\":\"${description}\",\"context\":\"${build_label}\",\"target_url\":\"${target_url}\"}" \
-    "${protocol}://${gitea_host}/api/v1/repos/${project_path}/statuses/${commit_sha}" #> /dev/null
+    "${protocol}://${gitea_host}/api/v1/repos/${project_path}/statuses/${commit_sha}"
+curl \
+    -s \
+    --request POST \
+    --header "Authorization: token ${private_token}" \
+    --header 'Content-Type: application/json' \
+    --data "{\"state\":\"${new_status}\",\"description\":\"${description}\",\"context\":\"${build_label}\",\"target_url\":\"${target_url}\"}" \
+    "${protocol}://${gitea_host}/api/v1/repos/${project_path}/statuses/${commit_sha}" > /dev/null
 version="{\"ref\":\"${commit_sha}:${branch}:${index}\"}"
 
 jq -n "{

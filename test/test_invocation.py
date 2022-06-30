@@ -32,16 +32,16 @@ def test_out(httpserver: HTTPServer):
     })
 
 
-#def test_empty_check(httpbin):
-#    """Check must return an empty response but not nothing."""
+def test_empty_check(httpserver: HTTPServer):
+    """Check must return an empty response but not nothing."""
 
-#    source = {
-#        'uri': 'http://foo.bar' + '/post',
-#        'method': 'POST',
-#    }
+    source = {
+        'uri': 'http://' + httpserver.host + ':' + str(httpserver.port) + '/myname/myproject.git',
+        'no_ssl': 'true'
+    }
 
-#    check = cmd('check', source)
+    check = cmd('check', source)
 
-#    assert check == []
+    assert check == []
 
 
