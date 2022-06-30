@@ -1,15 +1,20 @@
-user=bar
-name=foo
-
-
 docker=docker
-tag = $(user)/$(name)
-dockerfile = Dockerfile
+<<<<<<< HEAD
+tag = gitea-put-build-status-resource
+=======
+tag = objectivetruth/gitea-put-build-status-resource
+>>>>>>> master
 
 .PHONY: test
 
 build:
-    $(docker) build -t $(tag) .
+<<<<<<< HEAD
+	@echo 'Building...'
+	$(docker) build --target concourse_resource_build -t $(tag) .
+=======
+	$(docker) --target concourse_resource_test -t $(tag) .
+>>>>>>> master
 
 test:
-    @echo "Testing..."
+	@echo 'Testing...'
+	$(docker) build --target concourse_resource_test -t $(tag):test .
