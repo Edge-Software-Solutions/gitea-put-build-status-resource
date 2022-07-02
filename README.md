@@ -9,7 +9,7 @@ resource_types:
 - name: gitea-put-build-status
   type: docker-image
   source:
-    repository: objectivetruth/gitea-put-build-status-resource
+    repository: edgesoftwaresolutions/gitea-put-build-status-resource
 
 resources:
 - name: my-repo-build-status
@@ -17,41 +17,18 @@ resources:
   source:
     uri: https://my.gitea.host/myname/myproject.git
     private_token: XXX
-    username: my_username
-    password: xxx
 ```
 
 * `uri`: The location of the repository (required)
 * `private_token`: Your Gitea user's private token (required, can be found in your profile settings)
-* `private_key`: The private SSH key for SSH auth when pulling
-
-  Example:
-
-  ```yaml
-  private_key: |
-    -----BEGIN RSA PRIVATE KEY-----
-    MIIEowIBAAKCAQEAtCS10/f7W7lkQaSgD/mVeaSOvSF9ql4hf/zfMwfVGgHWjj+W
-    <Lots more text>
-    DWiJL+OFeg9kawcUL6hQ8JeXPhlImG6RTUffma9+iGQyyBMCGd1l
-    -----END RSA PRIVATE KEY-----
-  ```
-
-* `username`: The username for HTTP(S) auth when pulling
-* `password`: The password for HTTP(S) auth when pulling
 * `no_ssl`: Set to `true` if the Gitea API should be used over HTTP instead of HTTPS
-* `skip_ssl_verification`: Optional. Connect to Gitea insecurely - i.e. skip SSL validation. Defaults to false if not provided.
 
 > Please note that you have to provide either `private_key` or `username` and `password`.
 
 ## Behavior
 
-### `check`: Check for new pull requests
+### `check` and `in` are not implemented
 
-Checks if there are new pull requests or pull requests with new commits.
-
-### `in`: Clone pull request source branch
-
-`git clone`s the source branch of the respective pull request.
 
 ### `out`: Update a pull request's pull status
 
@@ -60,7 +37,7 @@ Updates the pull request's `status` which displays nicely in the Gitea UI and al
 #### Parameters
 
 * `repository`: The path of the repository of the pull request's source branch (required)
-* `status`: The new status of the pull request (required, can be either `pending`, `pending`, `error`, `failed`, or `warning`)
+* `status`: The new status of the pull request (required, can be either `pending`, `pending`, `error`, `failure`, or `warning`)
 * `build_label`: The label of the build in Gitea (optional, defaults to `"Concourse"`)
 * `description`: The description to pass to Gitea (optional)
 
