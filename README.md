@@ -1,4 +1,4 @@
-# Gitea Put Build Status Resource
+# Gitea Put Build Status Resource ![Docker Pulls](https://img.shields.io/docker/pulls/edgesoftwaresolution/gitea-put-build-status-resource)
 
 A concourse resource to put build statuses to gitea
 
